@@ -1,0 +1,118 @@
+** REMEMBER THE PREFABS **
+- If you want to make changes to a prefab object directly on the scene, don't. Open the prefab and make changes through it instead, it will automatically apply to all instances of the prefab
+	- For example: the same prefab "MainMenuCanvas" is used on the main menu scene and as a pause button, if you want changes on both of them, simply edit the prefab
+
+
+
+
+
+** Adding Scenes **
+
+- Transitioning between scenes must always be done via the "Loader" static class, which will go through loading scene automatically
+- New scene names must be added to the "Loader"'s pulic enum Scene in order to be accessible
+
+
+
+
+** Saving data **
+
+FOR PLAYER PREFS SETTINGS (graphics, audio, controls and so on)
+- "PlayerPrefsControl.cs" script is parented to main menu canvas, and it references the options menu where all these changes are made
+- The script contais all functions to load and apply preferences on startup, as well as saving changes
+- Any additional configurations must be added as a string, float or int, just follow the example of the other attributes
+	- Remember to add both the appropriate "Get" in the load functions, as well as the "Set" in the save function
+
+FOR IN-GAME DATA (player position, health, experience, etc...)
+- Data persistence Manager singleton persists across all scenes, so "SaveGame" and "LoadGame" can be called from any script at any time
+- All additional scripts that contain data to be saved MUST extend from "IDataPersistence" along with monobehaviour
+- All data that must be saved has to be added as a public member to "GameData.cs"
+- Autosaves on scene change and on application quit
+- "PlayerData" is the class holding all player data, in order to add new members, the constructor must also be updated in the base class, and the "SaveSystem.cs" "SavePlayer" method
+- The "Collectible.cs" script must be added to all "permanently collected" game objects, so they will not respawn upon reloading
+	- This class can be used as base for non-respawning enemies, NPCs and other objects
+	- Refer to the commented section if UI elements will be added to a collectible object
+- If scriptable objects must be saved, consider using a monobehaviour instead, if scriptable objects are still the preferred choice, create a class to mirror the data to be saved as a
+	medium. Just remember to add a constructor method and actually construct the object on "GameData.cs" class's constructor, since saving directly to the scriptable object
+	will only work in the editor, not in a build
+
+
+
+
+** Tabs Menu **
+
+- New menu tabs should be created from the prefab "TabMenuButton", simply add it to the sidebar
+- The relevant menu page for the new button can be created normally, it just needs to be parented to the "PageArea" gameObject in the appropriate order and then "dragged and dropped" through the inspector to the "pages to swap" area in the tabs sidebar
+
+
+
+
+** Animations **
+
+- A code using 2D blend trees was created and can be tested in the animTesting scene, it builds upon the input system defined in the "PlayerScript.cs"
+- Use that code as base for movement, since it covers basics such as acceleration, deceleration, walking / running and max speed
+- IMPORTANT: upon changing the playerScript max speed and maxRunSpeed parameters, the blend tree inside the animator controller must be changed to match values
+
+
+
+
+** Sounds **
+
+- Must attribute ownership rights to artists
+- Add relevant audio clip to audio manager in the appropriate section (music, sfx or voice) and call the relevant "Play" method via code
+
+- Used Sounds:
+	- Music:
+		- Dune Dreamer - Jangwa
+	- Voices:
+		- Sinister Laugh - Interlude888 (samplefocus.com)
+	- SFX:
+		- Bonk
+
+
+** Graphics **
+
+- Resolutions are dynamically added to the dropdown menu according to the display monitor's capabilities
+- To add new quality settings, refer to the menu on "Edit > Project Settings > Quality"
+
+
+** Controls Options **
+- Added key rebinding options for keyboard and controller
+- If more actions are added to the player, simply add another "RebindUIPrefab" to the appropriate page and assign the input action to it
+- Icons can be added to show up, instead of text via the "GamepadIconsExample" that is already added to the "ControllerScrollMenu" object, simply assign the sprites you wish to use to its appropriate location
+
+
+
+
+
+
+
+
+** Help Tooltip **
+
+- Any script has the power to "summon" a help tooltip panel at the top-right of the screen
+- Simply call it like so: "HelpPanelControl.instance.ActivateTooltip({1}, {2}, {3})"
+	-replace {1} for the tip title, {2} for the description and {3} for the duration the panel should stay open
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
