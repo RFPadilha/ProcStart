@@ -41,7 +41,8 @@ FOR IN-GAME DATA (player position, health, experience, etc...)
 ** Tabs Menu **
 
 - New menu tabs should be created from the prefab "TabMenuButton", simply add it to the sidebar
-- The relevant menu page for the new button can be created normally, it just needs to be parented to the "PageArea" gameObject in the appropriate order and then "dragged and dropped" through the inspector to the "pages to swap" area in the tabs sidebar
+- The relevant menu page for the new button can be created normally, it just needs to be parented to the "PageArea" gameObject in the appropriate order and then "dragged and dropped" 
+through the inspector to the "pages to swap" area in the tabs sidebar
 
 
 

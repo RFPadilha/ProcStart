@@ -2,12 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using Unity.AI.Navigation;
-using Unity.VisualScripting;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using UnityEngine.Rendering.Universal.Internal;
 using Random = UnityEngine.Random;
 
 public class DungeonCreator : MonoBehaviour
@@ -45,6 +41,7 @@ public class DungeonCreator : MonoBehaviour
     List<Vector3Int> possibleWallHorizontalPosition;
 
     List<Vector3Int> possibleColumnLocation;
+    List<GameObject> RoomObjects = new List<GameObject>();
 
     GameObject player;
     // Start is called before the first frame update
@@ -79,19 +76,15 @@ public class DungeonCreator : MonoBehaviour
         possibleDoorHorizontalPosition = new List<Vector3Int>();
         possibleWallHorizontalPosition = new List<Vector3Int>();
         possibleColumnLocation = new List<Vector3Int>();
+        
 
         for (int i = 0; i < roomList.Count; i++)
         {
-            GameObject room = CreateMesh(roomList[i].botLeftCorner, roomList[i].topRightCorner, roomParent);
-            PopulateRoomWithObject(buffPrefab, room, 5, roomList[i], 3, .2f);
-            PopulateRoomWithObject(chestPrefab, room, 5, roomList[i], 3, .5f);
-            PopulateRoomWithObject(enemyPrefab, room, 5, roomList[i], 3, .5f);
+            RoomObjects.Add(CreateMesh(roomList[i].botLeftCorner, roomList[i].topRightCorner, roomParent));
         }
         CreateWalls(wallParent, colParent);
 
         transform.GetComponent<NavMeshSurface>().BuildNavMesh();
-
-
 
         RoomNode playerSpawnRoom = generator.roomList[Random.Range(0, generator.roomList.Count)];
         player = RandomizeObjectPositionInRoom(playerPrefab, playerSpawnRoom.botLeftCorner, playerSpawnRoom.topRightCorner, 10, .3f);
@@ -102,20 +95,32 @@ public class DungeonCreator : MonoBehaviour
             player.transform.position = convPos;
         }
         if (player == null) Debug.LogError("Failed to place player");
+
+
+        for (int i = 0; i < roomList.Count; i++)
+        {
+            PopulateRoomWithObject(buffPrefab, RoomObjects[i], Random.Range(0, 5), roomList[i], 3, .2f);
+            PopulateRoomWithObject(chestPrefab, RoomObjects[i], Random.Range(0, 5), roomList[i], 3, 1f);
+            PopulateRoomWithObject(enemyPrefab, RoomObjects[i], Random.Range(0, 5), roomList[i], 3, 1f);
+        }
+
         DataPersistenceManager.instance.LoadGame();
 
         DataPersistenceManager.instance.UpdateSeed(seed);
     }
+
+
     private List<GameObject> PopulateRoomWithObject(GameObject prefab, GameObject parent, int amount, Node room, int attempts, float radius)
     {
         List<GameObject> placedGameObjects = new List<GameObject>();
         for (int i = 0; i < amount; i++)
         {
+            Debug.Log("Placing " + prefab.name + i);
             GameObject go = RandomizeObjectPositionInRoom(prefab, room.botLeftCorner, room.topRightCorner, attempts, radius);
+            if (go == null) continue;
             go.transform.parent = parent.transform;
             go.name = prefab.name + i.ToString();
             go.GetComponent<Collectible>().GenerateGuid();
-
             placedGameObjects.Add(go);
         }
         return placedGameObjects;
@@ -174,7 +179,6 @@ public class DungeonCreator : MonoBehaviour
             }
         }
         return true;
-
     }
     private void CreateWalls(GameObject wallParent, GameObject colParent)
     {

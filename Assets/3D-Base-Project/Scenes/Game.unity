@@ -467,11 +467,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5dafd9983dfdee41b8c080753a7ec81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  width: 40
-  length: 40
+  width: 100
+  length: 100
   roomMinWidth: 20
   roomMinLength: 20
-  maxIterations: 0
+  maxIterations: 5
   corridorWidth: 5
   mat: {fileID: 2100000, guid: bc9438c30110243b4adeec49f13593c1, type: 2}
   roomBotCornerModifier: 0.1
